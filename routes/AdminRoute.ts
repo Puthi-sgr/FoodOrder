@@ -3,10 +3,9 @@ import { CreateVendor, GetVendor, GetVendorById } from "../controllers/index";
 
 const router = express.Router();
 
-router.post('/vendor', CreateVendor);
+router.post("/vendor", CreateVendor);
 
-router.post("/vendors", GetVendor);
-router.get("/vendor:id", GetVendorById);
-
+router.get("/vendors", GetVendor);
+router.get("/vendor/:id", GetVendorById);
 
 export { router as AdminRoute };
