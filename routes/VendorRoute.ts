@@ -1,14 +1,26 @@
 import express, { Request, Response, NextFunction } from "express";
-import { VendorLogin, GetVendorProfile, UpdateVendorProfile, GetVendorService} from "../controllers/index";
+import {
+  VendorLogin,
+  GetVendorProfile,
+  UpdateVendorProfile,
+  UpdateVendorService,
+  AddFood,
+  GetFoods,
+} from "../controllers/index";
+import { Authenticate } from "../middlewares/CommonAuth";
 
 const router = express.Router();
 
 router.post("/login", VendorLogin);
 
-router.post("/profile", GetVendorProfile);
+router.get("/profile", Authenticate, GetVendorProfile);
 
-router.patch("/profile", UpdateVendorProfile);
+router.patch("/profile", Authenticate, UpdateVendorProfile);
 
-router.post("/service",  GetVendorService);
+router.patch("/service", Authenticate, UpdateVendorService);
+
+router.post("/food", Authenticate, AddFood);
+
+router.get("/foods", Authenticate, GetFoods);
 
 export { router as VendorRoute };

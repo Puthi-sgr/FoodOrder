@@ -12,6 +12,13 @@ export interface CreateVendorInput {
   salt: string;
 }
 
+export interface EditVendorInput {
+  name: string;
+  address: string;
+  phone: string;
+  foodType: [string];
+}
+
 export interface VendorLoginInput {
   email: string;
   password: string;
