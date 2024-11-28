@@ -16,12 +16,11 @@ export const Authenticate = async (
   next: NextFunction
 ) => {
   const validate = await ValidateSignature(req);
-
-  if (validate) {
-    next();
+  console.log("Validate status: ", validate);
+  if (!validate) {
+    res.status(400).json({ message: "Not authorized" });
     return;
   }
-
-  res.json({ message: "Not authorized" });
+  next();
   return;
 };

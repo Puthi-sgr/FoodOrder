@@ -28,19 +28,23 @@ export const GenerateSignature = (payload: VendorPayLoad) => {
 };
 
 export const ValidateSignature = async (req: Request) => {
-  const signature = req.get("Authorization");
-  
-  if (signature) {
-    const token = signature.split(" ")[1];
-    const payload = (await jwt.verify(
-      token,
-      process.env.APP_SECRET as string
-    )) as AuthPayLoad;
+  try {
+    const signature = req.get("Authorization");
 
-    req.user = payload;
+    if (signature) {
+      const token = signature.split(" ")[1];
 
-    return true;
+      const payload = (await jwt.verify(
+        token,
+        process.env.APP_SECRET as string
+      )) as AuthPayLoad;
+
+      req.user = payload;
+
+      return true;
+    }
+  } catch (err: any) {
+    console.log("Verification error: ", err.message);
+    return false;
   }
-
-  return false;
 };

@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from "express";
-import { EditVendorInput, VendorLoginInput } from "../dto";
+import { CreateFoodInput, EditVendorInput, VendorLoginInput } from "../dto";
 import { FindVendor } from "./AdminControllers";
 import { GeneratePassword, GenerateSignature, ValidatePassword } from "../util";
-import { Vendor } from "../models/Vendor";
+import { Vendor, VendorDoc } from "../models/Vendor";
+import { Food } from "../models";
 
 //#region Vendor
 const VendorLogin = async (req: Request, res: Response, next: NextFunction) => {
@@ -41,13 +42,22 @@ const GetVendorProfile = async (
 ) => {
   const user = req.user;
 
-  if (user) {
-    const existingVendor = await FindVendor(user._id);
-
-    res.json(existingVendor);
+  //handler user not found
+  if (!user) {
+    res.json({ message: "Fail to fetch user's profile" });
     return;
   }
-  res.json({ message: "Fail to fetch user's profile" });
+
+  const existingVendor = await FindVendor(user._id);
+
+  if (!existingVendor) {
+    res.json({
+      message: "Vendor is not found",
+    });
+    return;
+  }
+
+  res.json(existingVendor);
   return;
 };
 
@@ -83,6 +93,43 @@ const UpdateVendorProfile = async (
   return;
 };
 
+const UpdateCoverImages = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const user = req.user;
+
+  if (user) {
+    //fetch user in Database using req.user
+    try {
+      const vendor = await Vendor.findOne({ _id: user._id });
+
+      if (!vendor) {
+        res.json({ message: "Vendor is not found" });
+        return;
+      }
+      //store the file
+      const files = req?.files as [Express.Multer.File];
+      //map all file into this array
+      const CoverImages = files.map(
+        (file: Express.Multer.File) => file.filename
+      );
+
+      vendor.coverImages.push(...CoverImages);
+
+      const result = await vendor.save();
+
+      res.json({ message: "Cover image updated successfully", result });
+      return;
+    } catch (err: any) {
+      console.log("Error message: ", err.message);
+      res.status(500);
+      return;
+    }
+  }
+};
+
 const UpdateVendorService = async (
   req: Request,
   res: Response,
@@ -114,10 +161,66 @@ const UpdateVendorService = async (
 //#region FoodRegion
 
 const GetFoods = async (req: Request, res: Response, next: NextFunction) => {
+  const user = req.user;
+
+  if (!user) {
+    res.status(400).json({ message: "Unauthorized access" });
+  }
+
+  const foods = await Food.find({ vendorId: user?._id });
+
+  res.status(200).json({ foods });
   return;
 };
 
 const AddFood = async (req: Request, res: Response, next: NextFunction) => {
+  const user = req.user;
+
+  if (!user) {
+    res.status(400).json({ message: "Unauthorized access" });
+  }
+
+  try {
+    if (user) {
+      const { name, description, category, foodType, readyTime, price } = <
+        CreateFoodInput
+      >req.body;
+
+      const vendor = (await FindVendor(user._id)) as any;
+      if (vendor) {
+        const files = req.files as [Express.Multer.File];
+
+        const images = files.map(
+          (image: Express.Multer.File) => image.filename
+        );
+
+        const createdFood = await Food.create({
+          vendorId: vendor._id,
+          name,
+          description,
+          category,
+          foodType,
+          readyTime,
+          price,
+          images,
+          rating: 0,
+        });
+
+        vendor?.foods.push(createdFood);
+        const result = await vendor.save();
+
+        res.json(result);
+        return;
+      }
+    }
+  } catch (err: any) {
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: err.message });
+    return;
+  }
+
+  res.status(400).json({ message: "Failed to add food" });
   return;
 };
 
@@ -127,6 +230,7 @@ export {
   GetVendorProfile,
   UpdateVendorService,
   UpdateVendorProfile,
+  UpdateCoverImages,
   GetFoods,
   AddFood,
 };

@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
-interface VendorDoc extends Document {
+export interface VendorDoc extends Document {
   name: string;
   address: string;
   pinCode: string;
@@ -13,7 +13,7 @@ interface VendorDoc extends Document {
   serviceAwaitable: boolean; //available, busy, offline
   coverImages: [string];
   rating: number;
-  food: any;
+  foods: Schema.Types.ObjectId[];
 }
 
 const VendorSchema = new Schema(
@@ -30,7 +30,7 @@ const VendorSchema = new Schema(
     serviceAwaitable: { type: Boolean, require: true }, //available, busy, offline
     coverImages: [{ type: String }],
     rating: { type: Number, default: 0 },
-    food: [{ type: Schema.Types.ObjectId, ref: "food" }],
+    foods: [{ type: Schema.Types.ObjectId, ref: "food" }],
   },
   {
     toJSON: {
