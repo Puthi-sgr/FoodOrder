@@ -1,33 +1,18 @@
 import express from "express";
-import { Request, Response } from "express";
-import { AdminRoute, VendorRoute } from "./routes/index";
-import bodyParser from "body-parser";
-import mongoose from "mongoose";
-import { MONGO_URI } from "./config";
-import path from "path";
-import errorHandler from "./middlewares/ErrorHandler";
-const app = express();
+import Database from "./services/Database";
+import ExpressApp from "./services/ExpressApp";
 
-//middlewares
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+const startServer = async () => {
+  const app = express();
 
-//multer image storage
-app.use("/images", express.static(path.join(__dirname, "images")));
+  await Database();
+  await ExpressApp(app);
 
-//data base connection
-mongoose
-  .connect(MONGO_URI!)
-  .then((res) => console.log("Database connected"))
-  .catch((err) => console.log("Error: ", err));
+  const port = process.env.PORT || 3000;
+  app.listen(port, () => {
+    console.clear();
+    console.log(`Server is running on port ${port}`);
+  });
+};
 
-//error handling middleware
-app.use(errorHandler);
-
-//routes
-app.use("/admin", AdminRoute);
-app.use("/vendor", VendorRoute);
-app.listen(3000, () => {
-  console.clear();
-  console.log("Sever is listening port 3000");
-});
+startServer();
