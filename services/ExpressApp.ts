@@ -1,5 +1,5 @@
 import express, { Application } from "express";
-import { AdminRoute, VendorRoute } from "../routes/index";
+import { AdminRoute, VendorRoute, ShoppingRoute } from "../routes/index";
 import bodyParser from "body-parser";
 import path from "path";
 import errorHandler from "../middlewares/ErrorHandler";
@@ -18,5 +18,6 @@ export default async (app: Application) => {
   //routes
   app.use("/admin", AdminRoute);
   app.use("/vendor", VendorRoute);
+  app.use("/shopping", ShoppingRoute);
   return app;
 };

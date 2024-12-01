@@ -10,7 +10,7 @@ export interface VendorDoc extends Document {
   ownerName: string;
   phone: string;
   salt: string;
-  serviceAwaitable: boolean; //available, busy, offline
+  serviceAvailability: boolean; //available, busy, offline
   coverImages: [string];
   rating: number;
   foods: Schema.Types.ObjectId[];
@@ -27,7 +27,7 @@ const VendorSchema = new Schema(
     ownerName: { type: String, require: true },
     phone: { type: String, require: true, unique: true },
     salt: { type: String, require: true },
-    serviceAwaitable: { type: Boolean, require: true }, //available, busy, offline
+    serviceAvailability: { type: Boolean, require: true }, //available, busy, offline
     coverImages: [{ type: String }],
     rating: { type: Number, default: 0 },
     foods: [{ type: Schema.Types.ObjectId, ref: "food" }],

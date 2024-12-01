@@ -48,7 +48,7 @@ const CreateVendor = async (
       ownerName,
       phone,
       salt,
-      serviceAwaitable: false,
+      serviceAvailability: true,
       coverImages: [],
       rating: 0,
     });

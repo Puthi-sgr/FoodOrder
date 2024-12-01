@@ -141,7 +141,7 @@ const UpdateVendorService = async (
     //fetch user in Database using req.user
     const vendor = await Vendor.findOne({ _id: user._id });
     if (vendor) {
-      vendor.serviceAwaitable = !vendor.serviceAwaitable;
+      vendor.serviceAvailability = !vendor.serviceAvailability;
       const saveResult = await vendor.save();
 
       res.json(saveResult);
