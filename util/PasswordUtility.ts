@@ -21,7 +21,7 @@ export const ValidatePassword = async (
   return await bcrypt.compare(password, hashedPassword);
 };
 
-export const GenerateSignature = (payload: VendorPayLoad) => {
+export const GenerateSignature = (payload: AuthPayLoad) => {
   return jwt.sign(payload, process.env.APP_SECRET as string, {
     expiresIn: "1d",
   });

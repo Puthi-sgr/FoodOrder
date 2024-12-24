@@ -1,14 +1,24 @@
 import express, { Application } from "express";
-import { AdminRoute, VendorRoute, ShoppingRoute } from "../routes/index";
+import {
+  AdminRoute,
+  VendorRoute,
+  ShoppingRoute,
+  CustomerRoute,
+} from "../routes/index";
 import bodyParser from "body-parser";
 import path from "path";
 import errorHandler from "../middlewares/ErrorHandler";
+import cors from "cors";
 
 export default async (app: Application) => {
   //middlewares
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
-
+  app.use(
+    cors({
+      origin: "http://localhost:3001", // Allow requests from this origin
+    })
+  );
   //multer image storage
   app.use("/images", express.static(path.join(__dirname, "images")));
 
@@ -19,5 +29,6 @@ export default async (app: Application) => {
   app.use("/admin", AdminRoute);
   app.use("/vendor", VendorRoute);
   app.use("/shopping", ShoppingRoute);
+  app.use("/customer", CustomerRoute);
   return app;
 };
