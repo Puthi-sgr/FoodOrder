@@ -1,9 +1,13 @@
 import { CustomerDoc, Vendor } from "../models";
 import { Request, Response, NextFunction, response } from "express";
-import { CustomerInput, CustomerLoginInput } from "../dto/Customer.dto";
+import {
+  CustomerInput,
+  CustomerLoginInput,
+  EditCustomerProfileInputs,
+} from "../dto/Customer.dto";
 import { Customer } from "../models";
 import { plainToClass } from "class-transformer";
-import { validate } from "class-validator";
+import { validate, ValidationError } from "class-validator";
 import {
   GenerateSalt,
   GeneratePassword,
@@ -157,7 +161,6 @@ export const Verify = async (
 
     const signature = GenerateSignature(payload);
 
-    console.log("Signature complete");
     res.json({ message: "Account verification complete", signature });
     return;
   }
@@ -196,4 +199,73 @@ export const sendOtp = async (
   //resend to otp to the customer
   //update the otp expiry
   //return the otp code
+};
+
+export const GetCustomerProfile = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const user = req.user;
+
+  const customer = await Customer.findOne({ _id: user._id });
+  if (customer) {
+    res.status(200).json({
+      customer,
+    });
+    return;
+  }
+  res.status(400).json({ message: "Cannot find customer profile" });
+  return;
+};
+
+export const EditCustomerProfile = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const customer = req.user;
+
+  const profileInputs = plainToClass(EditCustomerProfileInputs, req.body);
+
+  const profileErrors = await validate(profileInputs, {
+    validationError: { target: true, value: false },
+  });
+
+  const targetError = profileErrors.map((error) => {
+    const description = `Errors on part`;
+    return `${description}[${error}]`;
+  });
+
+  if (profileErrors.length > 0) {
+    res.status(400).json({ message: "Invalid input", targetError });
+    return;
+  }
+
+  //Deconstruct the inputs
+  const { firstName, lastName, address } = profileInputs;
+  if (customer) {
+    const profile = await Customer.findOne({ _id: customer._id });
+
+    if (profile) {
+      profile.firstName = firstName;
+      profile.lastName = lastName;
+      profile.address = address;
+
+      const updatedProfile = await profile.save();
+
+      res.status(200).json({
+        message: "Customer profile updated successfully",
+        updatedProfile,
+      });
+
+      return;
+    }
+
+    res.status(400).json({ message: "Cannot find customer profile" });
+    return;
+  }
+
+  res.status(400).json({ message: "Something went wrong" });
+  return;
 };

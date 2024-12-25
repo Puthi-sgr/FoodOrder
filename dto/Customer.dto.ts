@@ -19,9 +19,9 @@ export class CustomerLoginInput {
   password: string;
 }
 
-export class EditCustomerProfile {
+export class EditCustomerProfileInputs {
   @Length(3, 16)
-  firstNam: string;
+  firstName: string;
   @Length(3, 16)
   lastName: string;
   @Length(6, 16)
