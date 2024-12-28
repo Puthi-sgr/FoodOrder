@@ -63,11 +63,12 @@ const GetVendor = async (req: Request, res: Response, next: NextFunction) => {
 
   //error handling
   if (!vendors) {
-    res.status(400);
-    throw new Error("Vendors data are not available");
+    res.status(400).json({ message: "error fetching vendors" });
+    return;
   }
 
   res.status(200).json({ vendors });
+  return;
 };
 
 const GetVendorById = async (
@@ -75,27 +76,24 @@ const GetVendorById = async (
   res: Response,
   next: NextFunction
 ) => {
-  try {
-    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-      res.status(400).json({
-        message: "Invalid id format",
-      });
-      return;
-    }
-
-    const id: string = req.params.id;
-    const vendor = await FindVendor(id);
-
-    if (!vendor) {
-      res.status(400).json({
-        message: "Vendor does not exist",
-      });
-      return;
-    }
-    res.status(200).json({ vendor });
-  } catch (err) {
-    console.log("Error: ", err);
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    res.status(400).json({
+      message: "Invalid id format",
+    });
+    return;
   }
+
+  const id: string = req.params.id;
+  const vendor = await FindVendor(id);
+
+  if (!vendor) {
+    res.status(400).json({
+      message: "Vendor does not exist",
+    });
+    return;
+  }
+  res.status(200).json({ vendor });
+  return;
 };
 
 export { CreateVendor, GetVendor, GetVendorById, FindVendor };
