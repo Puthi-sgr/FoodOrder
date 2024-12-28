@@ -1,7 +1,10 @@
-import { MONGO_URI } from "../config";
+import dotenv from "dotenv";
+dotenv.config();
+import { MONGO_URI } from "../config/index";
 import mongoose from "mongoose";
 
 export default async () => {
+
   try {
     //data base connection
     await mongoose
