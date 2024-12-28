@@ -12,13 +12,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const config_1 = require("../config");
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
+const index_1 = require("../config/index");
 const mongoose_1 = __importDefault(require("mongoose"));
 exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         //data base connection
         yield mongoose_1.default
-            .connect(config_1.MONGO_URI)
+            .connect(index_1.MONGO_URI)
             .then((res) => console.log("Database connected"))
             .catch((err) => console.log("Error: ", err));
     }
