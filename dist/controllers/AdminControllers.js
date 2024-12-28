@@ -62,33 +62,30 @@ const GetVendor = (req, res, next) => __awaiter(void 0, void 0, void 0, function
     const vendors = yield Vendor_1.Vendor.find();
     //error handling
     if (!vendors) {
-        res.status(400);
-        throw new Error("Vendors data are not available");
+        res.status(400).json({ message: "error fetching vendors" });
+        return;
     }
     res.status(200).json({ vendors });
+    return;
 });
 exports.GetVendor = GetVendor;
 const GetVendorById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        if (!mongoose_1.default.Types.ObjectId.isValid(req.params.id)) {
-            res.status(400).json({
-                message: "Invalid id format",
-            });
-            return;
-        }
-        const id = req.params.id;
-        const vendor = yield FindVendor(id);
-        if (!vendor) {
-            res.status(400).json({
-                message: "Vendor does not exist",
-            });
-            return;
-        }
-        res.status(200).json({ vendor });
+    if (!mongoose_1.default.Types.ObjectId.isValid(req.params.id)) {
+        res.status(400).json({
+            message: "Invalid id format",
+        });
+        return;
     }
-    catch (err) {
-        console.log("Error: ", err);
+    const id = req.params.id;
+    const vendor = yield FindVendor(id);
+    if (!vendor) {
+        res.status(400).json({
+            message: "Vendor does not exist",
+        });
+        return;
     }
+    res.status(200).json({ vendor });
+    return;
 });
 exports.GetVendorById = GetVendorById;
 //# sourceMappingURL=AdminControllers.js.map

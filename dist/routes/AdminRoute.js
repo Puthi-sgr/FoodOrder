@@ -11,7 +11,7 @@ exports.AdminRoute = router;
 router.post("/vendor", index_1.CreateVendor);
 router.get("/test", (req, res, next) => {
     res.json({
-        message: "success",
+        message: "success test 3",
     });
     return;
 });

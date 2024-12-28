@@ -20,7 +20,9 @@ exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         //data base connection
         yield mongoose_1.default
-            .connect(index_1.MONGO_URI)
+            .connect(index_1.MONGO_URI, {
+            serverSelectionTimeoutMS: 100000, // Increase timeout to 20 seconds
+        })
             .then((res) => console.log("Database connected"))
             .catch((err) => console.log("Error: ", err));
     }
