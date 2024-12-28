@@ -9,6 +9,12 @@ const index_1 = require("../controllers/index");
 const router = express_1.default.Router();
 exports.AdminRoute = router;
 router.post("/vendor", index_1.CreateVendor);
+router.get("/test", (req, res, next) => {
+    res.json({
+        message: "success",
+    });
+    return;
+});
 router.get("/vendors", index_1.GetVendor);
 router.get("/vendor/:id", index_1.GetVendorById);
 //# sourceMappingURL=AdminRoute.js.map
