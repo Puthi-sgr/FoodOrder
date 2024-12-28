@@ -6,7 +6,7 @@ const router = express.Router();
 router.post("/vendor", CreateVendor);
 router.get("/test", (req, res, next) => {
   res.json({
-    message: "success",
+    message: "success test 3",
   });
   return;
 });
