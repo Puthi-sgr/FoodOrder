@@ -4,6 +4,12 @@ import { CreateVendor, GetVendor, GetVendorById } from "../controllers/index";
 const router = express.Router();
 
 router.post("/vendor", CreateVendor);
+router.get("/test", (req, res, next) => {
+  res.json({
+    message: "success",
+  });
+  return;
+});
 
 router.get("/vendors", GetVendor);
 router.get("/vendor/:id", GetVendorById);
