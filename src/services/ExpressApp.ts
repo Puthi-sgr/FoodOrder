@@ -14,11 +14,11 @@ export default async (app: Application) => {
   //middlewares
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
-  app.use(
-    cors({
-      origin: "http://localhost:3001", // Allow requests from this origin
-    })
-  );
+  // app.use(
+  //   cors({
+  //     origin: "http://localhost:3001",
+  //   })
+  // );
   //multer image storage
   app.use("/images", express.static(path.join(__dirname, "images")));
 

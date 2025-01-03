@@ -59,15 +59,17 @@ const CreateVendor = async (
 };
 
 const GetVendor = async (req: Request, res: Response, next: NextFunction) => {
+  console.log("Fetching vendor");
   const vendors = await Vendor.find();
-
+  console.log("Fetched vendor successfully");
   //error handling
   if (!vendors) {
     res.status(400).json({ message: "error fetching vendors" });
     return;
   }
-
+  console.log("Reaching the response");
   res.status(200).json({ vendors });
+  console.log("After the response");
   return;
 };
 
