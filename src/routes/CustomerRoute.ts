@@ -6,6 +6,9 @@ import {
   sendOtp,
   EditCustomerProfile,
   GetCustomerProfile,
+  CreateOrder,
+  GetOrderById,
+  GetOrders,
 } from "../controllers";
 import { Authenticate } from "../middlewares/CommonAuth";
 
@@ -27,7 +30,11 @@ router.patch("/edit", Authenticate, EditCustomerProfile);
 //---------- Cart ----------
 
 //---------- Order ----------
+router.post("/create", Authenticate, CreateOrder);
 
+router.get("/orders", Authenticate, GetOrders);
+
+router.get("/order:id", Authenticate, GetOrderById);
 //---------- Payment ----------
 
 export { router as CustomerRoute };

@@ -6,6 +6,7 @@ export class CustomerInput {
   email: string;
   @Length(10, 10)
   phone: string;
+  @Length(3, 99)
   @IsNotEmpty()
   password: string;
 }
@@ -15,7 +16,7 @@ export class CustomerLoginInput {
   @IsNotEmpty()
   email: string;
 
-  @Length(6, 99)
+  @Length(3, 99)
   password: string;
 }
 
@@ -32,4 +33,9 @@ export interface CustomerPayload {
   _id: string;
   email: string;
   verified: boolean;
+}
+
+export class OrderInputs {
+  _id: string;
+  unit: number;
 }

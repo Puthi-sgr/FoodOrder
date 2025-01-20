@@ -1,9 +1,10 @@
-import { CustomerDoc, Vendor } from "../models";
+import { CustomerDoc, Food, Vendor } from "../models";
 import { Request, Response, NextFunction, response } from "express";
 import {
   CustomerInput,
   CustomerLoginInput,
   EditCustomerProfileInputs,
+  OrderInputs,
 } from "../dto/Customer.dto";
 import { Customer } from "../models";
 import { plainToClass } from "class-transformer";
@@ -19,6 +20,7 @@ import { AuthPayLoad } from "../dto";
 import { sign } from "jsonwebtoken";
 import { CustomerRoute } from "../routes";
 import { CustomerProfilesEntityAssignmentsContextImpl } from "twilio/lib/rest/trusthub/v1/customerProfiles/customerProfilesEntityAssignments";
+import { Order } from "../models/Order";
 
 export const SignUp = async (
   req: Request,
@@ -59,6 +61,7 @@ export const SignUp = async (
     otp_expiry: expiry,
     lat: "",
     lng: "",
+    order: [],
   });
   if (createdCustomer) {
     //await OnRequestOTP(otp, "1234");
@@ -69,7 +72,7 @@ export const SignUp = async (
     };
 
     const signature = GenerateSignature(payload);
-    res.status(200).json({ message: "OTP sent successfully", signature });
+    res.status(200).json({ message: "OTP sent successfully", signature, otp });
     return;
   }
 };
@@ -267,5 +270,113 @@ export const EditCustomerProfile = async (
   }
 
   res.status(400).json({ message: "Something went wrong" });
+  return;
+};
+
+export const CreateOrder = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const customer = req.user;
+
+  if (customer) {
+    const orderID = `${Math.floor(Math.random() * 9789) + 1000}`;
+    //get  profile
+    const profile = await Customer.findById(customer._id);
+
+    let cart = <[OrderInputs]>req.body; //{id:xx, unit:xx}
+    let cartItems = Array();
+    let netAmount = 0.0;
+
+    console.log(cart);
+    //let netAmount = 0;
+
+    const foodItems = await Food.find().exec(); //execute the query to get food
+    const cartItemIds = cart.map((item) => item._id); //create an array of items ids;
+    const foods = foodItems.filter((food) => cartItemIds.includes(food.id)); //filter out the food that has the same id as card id
+
+    foods.map((food) => {
+      //maps over the cart
+      //object as params, id unit
+      cart.map(({ _id, unit }) => {
+        //if carts food id is equal cart food if
+        if (food._id === _id) {
+          //Sum net amount with foodPrice times unit
+          netAmount += unit * food.price;
+          //push the food and unit
+          cartItems.push({ food, unit });
+        }
+      });
+    });
+
+    //if the cart items exists, initialize the order
+    if (cartItems) {
+      const CreateOrder = await Order.create({
+        orderID,
+        customerID: profile._id,
+        customerName: `${profile.firstName} ${profile.lastName}`,
+        items: cartItems, //array
+        totalAmount: netAmount,
+        orderDate: new Date(),
+        paidThrough: "COD",
+        paymentResponse: "",
+        orderStatus: "Waiting",
+      });
+
+      if (CreateOrder) {
+        profile.orders.push(CreateOrder);
+        const profileResponse = await profile.save();
+
+        res.json({ message: "Success", profileResponse });
+        return;
+        //Update the orders to user account
+      }
+    }
+  }
+
+  res.json({ message: "Something went wrong" });
+  return;
+};
+
+export const GetOrders = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  //retrieve customer info
+  const customer = req.user;
+
+  if (customer) {
+    const profile = await Customer.findById(customer._id).populate("orders");
+
+    if (profile) {
+      res.json({ message: "Success", profile });
+      return;
+    }
+    res.json({ message: "Failed to fetch customer's profile" });
+    return;
+  }
+  //map out customer .orders
+  res.json({ message: "Failed to fetch customer's order" });
+  return;
+  //return the ordered list
+};
+
+export const GetOrderById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const orderID = req.params.id;
+
+  if (orderID) {
+    const order = (await Order.findById(orderID)).populate("items.food");
+
+    res.json({ message: "Success", order });
+    return;
+  }
+
+  res.json({ message: "Failed to fetch order" });
   return;
 };
