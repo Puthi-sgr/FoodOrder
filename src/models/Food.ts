@@ -10,6 +10,7 @@ export interface FoodDoc extends Document {
   price: number;
   rating: number;
   images: [string]; //multiple images of the same food
+
 }
 
 const FoodSchema = new Schema(

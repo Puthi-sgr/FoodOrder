@@ -8,6 +8,7 @@ export class CustomerInput {
   phone: string;
   @Length(3, 99)
   @IsNotEmpty()
+  @Length(3, 99)
   password: string;
 }
 
@@ -16,7 +17,7 @@ export class CustomerLoginInput {
   @IsNotEmpty()
   email: string;
 
-  @Length(3, 99)
+  @Length(2, 99)
   password: string;
 }
 
@@ -35,7 +36,38 @@ export interface CustomerPayload {
   verified: boolean;
 }
 
-export class OrderInputs {
+export class CartItem {
+  @IsNotEmpty()
   _id: string;
+  @IsNotEmpty()
   unit: number;
+}
+
+export class OrderInputs {
+  txnId: string;
+  amount: string;
+  items: [CartItem];
+}
+
+export class CreateDeliveryUserInputs {
+  @IsEmail()
+  email: string;
+
+  @Length(7, 12)
+  phone: string;
+
+  @Length(6, 12)
+  password: string;
+
+  @Length(3, 12)
+  firstName: string;
+
+  @Length(3, 12)
+  lastName: string;
+
+  @Length(6, 24)
+  address: string;
+
+  @Length(4, 12)
+  pinCode: string;
 }

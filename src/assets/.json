@@ -1,0 +1,22 @@
+{
+  "vendorInfo": {
+    "name": "Puthi",
+    "address": "Phnom Penh",
+    "pinCode": "1234",
+    "foodType": "Khmer",
+    "email": "chethaputhi@gmail.com",
+    "password": "1234",
+    "ownerName": "Puthi",
+    "phone": "012341234"
+  },
+  "vendorInfo2": {
+    "name": "ChickenSauce",
+    "address": "Mumbai",
+    "pinCode": "1232124",
+    "foodType": "India",
+    "email": "pathini@gmail.com",
+    "password": "1099",
+    "ownerName": "Habibi",
+    "phone": "0000990234"
+  }
+}

@@ -9,6 +9,10 @@ import {
   CreateOrder,
   GetOrderById,
   GetOrders,
+  AddToCart,
+  DeleteCart,
+  GetCart,
+  CreatePayment,
 } from "../controllers";
 import { Authenticate } from "../middlewares/CommonAuth";
 
@@ -28,7 +32,13 @@ router.get("/profile", Authenticate, GetCustomerProfile);
 
 router.patch("/edit", Authenticate, EditCustomerProfile);
 //---------- Cart ----------
+router.post("/cart", Authenticate, AddToCart);
 
+router.get("/cart", Authenticate, GetCart);
+//--------- Profile ---------
+router.get("/offer/verify/:id");
+
+router.delete("/cart", Authenticate, DeleteCart);
 //---------- Order ----------
 router.post("/create", Authenticate, CreateOrder);
 
@@ -36,5 +46,5 @@ router.get("/orders", Authenticate, GetOrders);
 
 router.get("/order:id", Authenticate, GetOrderById);
 //---------- Payment ----------
-
+router.post("/payment", Authenticate, CreatePayment);
 export { router as CustomerRoute };

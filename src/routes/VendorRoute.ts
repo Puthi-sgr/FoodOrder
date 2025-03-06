@@ -7,6 +7,12 @@ import {
   AddFood,
   GetFoods,
   UpdateCoverImages,
+  GetOrderDetails,
+  ProcessOrder,
+  GetCurrentOrders,
+  GetOffers,
+  AddOffer,
+  EditOffer,
 } from "../controllers/index";
 import { Authenticate } from "../middlewares/CommonAuth";
 import multer from "multer";
@@ -16,7 +22,7 @@ const router = express.Router();
 
 const imageStorage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const imagePath = path.join(process.cwd(), "images");
+    const imagePath = path.join(process.cwd(), "/src/images");
     cb(null, imagePath);
   },
   filename: function (req, file, cb) {
@@ -38,5 +44,15 @@ router.patch("/service", Authenticate, UpdateVendorService);
 router.post("/food", Authenticate, images, AddFood);
 
 router.get("/foods", Authenticate, GetFoods);
+
+//------------ Order. Order received from the customer's order
+router.get("/orders", Authenticate, GetCurrentOrders);
+router.put("/order/:id/process", Authenticate, ProcessOrder);
+router.get("/order/:id", Authenticate, GetOrderDetails);
+
+//---------- Offers
+router.get("/offers", Authenticate, GetOffers);
+router.post("/offer", Authenticate, AddOffer);
+router.put("/offer/:id", Authenticate, EditOffer);
 
 export { router as VendorRoute };

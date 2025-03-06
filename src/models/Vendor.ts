@@ -14,6 +14,8 @@ export interface VendorDoc extends Document {
   coverImages: [string];
   rating: number;
   foods: Schema.Types.ObjectId[];
+  lat: number;
+  lng: number;
 }
 
 const VendorSchema = new Schema(
@@ -31,6 +33,8 @@ const VendorSchema = new Schema(
     coverImages: [{ type: String }],
     rating: { type: Number, default: 0 },
     foods: [{ type: Schema.Types.ObjectId, ref: "food" }],
+    lat: { type: Number },
+    lng: { type: Number },
   },
   {
     toJSON: {

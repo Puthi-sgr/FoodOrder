@@ -1,5 +1,6 @@
 import express, { Response, Request, NextFunction } from "express";
 import { FoodDoc, Vendor, VendorDoc } from "../models";
+import { Offer } from "../models/Offer";
 
 export const GetTopRestaurant = async (
   req: Request,
@@ -91,12 +92,25 @@ export const SearchFood = async (
   }) //find the vendor geo area and choose those who are available
     .populate("foods"); //merge the food data
 
+  const vendorList = result.map((res, key) => {
+    const { name, address, foodType, phone, serviceAvailability, foods } = res;
+
+    return {
+      name,
+      address,
+      foodType,
+      phone,
+      serviceAvailability,
+      foods,
+    };
+  });
+
   if (result.length == 0) {
     res.json({ message: "No food was found" });
   }
 
   if (result.length > 0) {
-    res.json(result);
+    res.json(vendorList);
     return;
   }
 
@@ -110,13 +124,38 @@ export const GetRestaurantById = async (
 ) => {
   const id = req.params.id;
 
-  const vendor = await Vendor.findById(id).populate("foods");
+  try {
+    const vendor = await Vendor.findById(id).populate("foods");
 
-  if (!vendor) {
-    res.status(400).json({ message: "Vendor was not found" });
+    if (!vendor) {
+      res.status(400).json({ message: "Vendor was not found" });
+      return;
+    }
+
+    res.json(vendor);
     return;
+  } catch (err) {
+    res.status(500).json({ err });
   }
+};
 
-  res.json(vendor);
-  return;
+export const GetAvailableOffers = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const pinCode = req.params.pinCode;
+
+  const offers = await Offer.find({ pinCode: pinCode, isActive: true });
+
+  try {
+    if (!offers) {
+      res.json(400).json({ message: "Offer was not found" });
+      return;
+    }
+
+    res.json(200).json({ message: "Offer was found", offers });
+  } catch (err) {
+    res.json(500).json(err);
+  }
 };

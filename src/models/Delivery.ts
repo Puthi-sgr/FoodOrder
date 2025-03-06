@@ -1,7 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { OrderDoc } from "./Order";
 
-export interface CustomerDoc extends Document {
+export interface DeliveryDoc extends Document {
   email: string;
   password: string;
   salt: string;
@@ -10,15 +9,12 @@ export interface CustomerDoc extends Document {
   address: string;
   phone: string;
   verified: boolean;
-  otp: number;
-  otp_expiry: Date;
   lat: number;
   lng: number;
-  cart: [any];
-  orders: [OrderDoc];
+  isAvailable: boolean;
 }
 
-const CustomerSchema = new Schema(
+const DeliverySchema = new Schema(
   {
     email: { type: String, required: true },
     password: { type: String, required: true },
@@ -28,27 +24,9 @@ const CustomerSchema = new Schema(
     address: { type: String },
     phone: { type: String, required: true },
     verified: { type: Boolean, required: true },
-    otp: { type: Number },
-    otp_expiry: { type: Date },
     lat: { type: Number },
     lng: { type: Number },
-    cart: [
-      {
-        food: { type: Schema.Types.ObjectId, ref: "food" },
-        unit: {
-          type: Number,
-          require: true,
-        },
-      },
-    ],
-    orders: [
-      {
-        //one to many relation ship. A customer may have multiple order thus the array
-        //the order id is referenced to the order doc
-        type: Schema.Types.ObjectId,
-        ref: "order",
-      },
-    ],
+    isAvailable: { type: Boolean },
   },
   {
     toJSON: {
@@ -60,6 +38,6 @@ const CustomerSchema = new Schema(
   }
 );
 
-const Customer = mongoose.model<CustomerDoc>("customer", CustomerSchema);
+const Delivery = mongoose.model<DeliveryDoc>("delivery", DeliverySchema);
 
-export { Customer };
+export { Delivery };

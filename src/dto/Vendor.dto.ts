@@ -30,3 +30,20 @@ export interface VendorPayLoad {
   name: string;
   foodTypes: string[];
 }
+
+export interface CreateOfferInput {
+  offerType: string; //Vendor //Generic
+  vendors: [any];
+  title: string;
+  description: string;
+  minValue: number; //minimum order amount should be 10$
+  offerAmount: number; //4$
+  startValidity: Date;
+  endValidity: Date;
+  promoCode: string;
+  promoType: string; //USER //ALL //BANK //CARD
+  bank: [any];
+  bins: [any];
+  pinCode: string;
+  isActive: boolean;
+}

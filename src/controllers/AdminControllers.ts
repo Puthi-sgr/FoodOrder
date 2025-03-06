@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { CreateVendorInput } from "../dto";
 import { Vendor } from "../models/Vendor";
+import { Transaction } from "../models/Transaction";
 import { GeneratePassword, GenerateSalt } from "../util";
 import mongoose from "mongoose";
 
@@ -51,6 +52,8 @@ const CreateVendor = async (
       serviceAvailability: true,
       coverImages: [],
       rating: 0,
+      lat: 0,
+      lng: 0,
     });
     res.status(201).json({ CreateNewVendor });
   } catch (err) {
@@ -98,4 +101,49 @@ const GetVendorById = async (
   return;
 };
 
-export { CreateVendor, GetVendor, GetVendorById, FindVendor };
+const GetTransactions = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const transactions = await Transaction.find();
+  if (!transactions) {
+    res.status(404).json({
+      message: "No transactions are found",
+    });
+    return;
+  }
+
+  res.status(200).json({
+    message: "Success",
+    transactions,
+  });
+};
+const GetTransactionById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const id = req.params.id;
+
+  const transaction = await Transaction.findById(id);
+  if (!transaction) {
+    res.status(404).json({
+      message: "No transactions are found",
+    });
+    return;
+  }
+
+  res.status(200).json({
+    message: "Success",
+    transaction,
+  });
+};
+export {
+  CreateVendor,
+  GetVendor,
+  GetVendorById,
+  FindVendor,
+  GetTransactionById,
+  GetTransactions,
+};
